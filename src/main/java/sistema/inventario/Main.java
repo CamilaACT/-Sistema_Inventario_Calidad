@@ -1,12 +1,20 @@
 package sistema.inventario;
- 
+
+/**
+ * Clase principal para ejecutar el sistema de inventario.
+ */
 public class Main {
+
+    /**
+     * Método principal.
+     * @param args argumentos
+     */
     public static void main(String[] args) {
         IOutput output = new ConsoleOutput();
         Inventory inventory = new Inventory(output);
- 
-        inventory.addProduct("Laptop", 5, 1000.0);
-        inventory.addProduct("Mouse", 10, 25.50);
+
+        inventory.addProduct("Monitor", 5, 129.99);
+        inventory.addProduct("Teclado", 10, 39.99);
         inventory.printInventory();
     }
 }

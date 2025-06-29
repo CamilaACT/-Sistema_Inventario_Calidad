@@ -1,9 +1,20 @@
 package sistema.inventario;
+
+/**
+ * Clase que representa un producto del inventario.
+ */
 public class Product {
+
     private final String name;
     private int quantity;
     private double price;
 
+    /**
+     * Constructor del producto.
+     * @param name nombre
+     * @param quantity cantidad
+     * @param price precio
+     */
     public Product(String name, int quantity, double price) {
         this.name = name;
         this.quantity = quantity;
