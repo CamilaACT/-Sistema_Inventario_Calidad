@@ -11,20 +11,195 @@ https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <properties>
 <maven.compiler.source>11</maven.compiler.source>
 <maven.compiler.target>11</maven.compiler.target>
+<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<junit.version>5.9.3</junit.version>
+<maven.surefire.version>3.1.2</maven.surefire.version>
+<jacoco.version>0.8.10</jacoco.version>
 </properties>
  
+  <dependencies>
+    <!-- JUnit 5 - Motor de pruebas -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- JUnit 5 - API para escribir pruebas -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- JUnit 5 - Motor de ejecución -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- JUnit 5 - Pruebas parametrizadas -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- Mockito para mocks (opcional pero recomendado) -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.4.0</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- Mockito extensión para JUnit 5 -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.4.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+ 
   <build>
-<plugins>
-<!-- Plugin para ejecutar el método main -->
-<plugin>
-<groupId>org.codehaus.mojo</groupId>
-<artifactId>exec-maven-plugin</artifactId>
-<version>3.1.0</version>
-<configuration>
-<mainClass>sistema.inventario.Main</mainClass>
-</configuration>
-</plugin>
-</plugins>
-</build>
+    <plugins>
+      <!-- Plugin para compilación -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>11</source>
+          <target>11</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      
+      <!-- Plugin para ejecutar el método main -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <mainClass>sistema.inventario.Main</mainClass>
+        </configuration>
+      </plugin>
+      
+      <!-- Plugin Surefire para ejecutar pruebas unitarias -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.version}</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
+          </includes>
+          <argLine>-Dfile.encoding=UTF-8</argLine>
+        </configuration>
+      </plugin>
+      
+      <!-- Plugin JaCoCo para cobertura de código -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>BUNDLE</element>
+                  <limits>
+                    <limit>
+                      <counter>INSTRUCTION</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.80</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- Plugin Failsafe para pruebas de integración (opcional) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.1.2</version>
+        <configuration>
+          <includes>
+            <include>**/*IT.java</include>
+            <include>**/*IntegrationTest.java</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+ 
+  <!-- Perfiles para diferentes entornos -->
+  <profiles>
+    <!-- Perfil para desarrollo en Codespaces -->
+    <profile>
+      <id>codespaces</id>
+      <activation>
+        <property>
+          <name>env.CODESPACES</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <maven.test.skip>false</maven.test.skip>
+      </properties>
+    </profile>
+    
+    <!-- Perfil para solo ejecutar pruebas -->
+    <profile>
+      <id>test-only</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
  
 </project>
