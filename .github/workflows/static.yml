@@ -113,7 +113,7 @@ jobs:
 
       - name: Generate HTML
         run: |
-          mvn exec:java -Dexec.mainClass="sistema.inventario.Main"
+          mvn exec:java -Dexec.mainClass="sistema.inventario.Main" -e
           mkdir -p output
 
       - name: Copy reports to output
