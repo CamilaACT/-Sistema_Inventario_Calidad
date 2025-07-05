@@ -113,6 +113,7 @@ jobs:
 
       - name: Generate HTML
         run: |
+          mvn clean compile
           mvn exec:java -Dexec.mainClass="sistema.inventario.Main" -e
           mkdir -p output
 
