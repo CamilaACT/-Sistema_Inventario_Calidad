@@ -48,31 +48,75 @@ public class ProductTest {
     }
     
     /**
-     * Prueba el constructor con nombre nulo
+     * Prueba el constructor con nombre nulo - debe lanzar excepción
      */
     @Test
     void testConstructor_NullName() {
-        // Arrange & Act
-        Product nullNameProduct = new Product(null, 1, 10.0);
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> new Product(null, 1, 10.0));
         
-        // Assert
-        assertNull(nullNameProduct.getName());
-        assertEquals(1, nullNameProduct.getQuantity());
-        assertEquals(10.0, nullNameProduct.getPrice(), 0.01);
+        assertEquals("El nombre del producto no puede ser nulo o vacío", exception.getMessage());
     }
     
     /**
-     * Prueba el constructor con nombre vacío
+     * Prueba el constructor con nombre vacío - debe lanzar excepción
      */
     @Test
     void testConstructor_EmptyName() {
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> new Product("", 1, 10.0));
+        
+        assertEquals("El nombre del producto no puede ser nulo o vacío", exception.getMessage());
+    }
+    
+    /**
+     * Prueba el constructor con nombre solo espacios - debe lanzar excepción
+     */
+    @Test
+    void testConstructor_WhitespaceOnlyName() {
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> new Product("   ", 1, 10.0));
+        
+        assertEquals("El nombre del producto no puede ser nulo o vacío", exception.getMessage());
+    }
+    
+    /**
+     * Prueba el constructor con cantidad negativa - debe lanzar excepción
+     */
+    @Test
+    void testConstructor_NegativeQuantity() {
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> new Product("Producto", -1, 10.0));
+        
+        assertEquals("La cantidad no puede ser negativa", exception.getMessage());
+    }
+    
+    /**
+     * Prueba el constructor con precio negativo - debe lanzar excepción
+     */
+    @Test
+    void testConstructor_NegativePrice() {
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> new Product("Producto", 1, -10.0));
+        
+        assertEquals("El precio no puede ser negativo", exception.getMessage());
+    }
+    
+    /**
+     * Prueba el constructor con nombre con espacios al inicio y final - debe hacer trim
+     */
+    @Test
+    void testConstructor_NameWithSpaces() {
         // Arrange & Act
-        Product emptyNameProduct = new Product("", 1, 10.0);
+        Product trimmedProduct = new Product("  Producto con espacios  ", 1, 10.0);
         
         // Assert
-        assertEquals("", emptyNameProduct.getName());
-        assertEquals(1, emptyNameProduct.getQuantity());
-        assertEquals(10.0, emptyNameProduct.getPrice(), 0.01);
+        assertEquals("Producto con espacios", trimmedProduct.getName());
     }
     
     /**
@@ -88,7 +132,7 @@ public class ProductTest {
      * Prueba el getter getName con diferentes tipos de nombres
      */
     @ParameterizedTest
-    @ValueSource(strings = {"Producto Simple", "PRODUCTO_MAYUSCULAS", "producto-con-guiones", "Producto123", "Producto con espacios múltiples"})
+    @ValueSource(strings = {"Producto Simple", "PRODUCTO_MAYUSCULAS", "producto-con-guiones", "Producto123"})
     void testGetName_DifferentNameFormats(String name) {
         // Arrange
         Product testProduct = new Product(name, 1, 10.0);
@@ -131,15 +175,15 @@ public class ProductTest {
     }
     
     /**
-     * Prueba el setter setQuantity con valores negativos
+     * Prueba el setter setQuantity con valores negativos - debe lanzar excepción
      */
     @Test
     void testSetQuantity_NegativeValues() {
-        // Act
-        product.setQuantity(-5);
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> product.setQuantity(-5));
         
-        // Assert
-        assertEquals(-5, product.getQuantity());
+        assertEquals("La cantidad no puede ser negativa", exception.getMessage());
     }
     
     /**
@@ -191,15 +235,15 @@ public class ProductTest {
     }
     
     /**
-     * Prueba el setter setPrice con valores negativos
+     * Prueba el setter setPrice con valores negativos - debe lanzar excepción
      */
     @Test
     void testSetPrice_NegativeValues() {
-        // Act
-        product.setPrice(-100.0);
+        // Arrange & Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> product.setPrice(-100.0));
         
-        // Assert
-        assertEquals(-100.0, product.getPrice(), 0.01);
+        assertEquals("El precio no puede ser negativo", exception.getMessage());
     }
     
     /**
@@ -281,5 +325,87 @@ public class ProductTest {
         assertEquals("Producto-Ñandú_123 (Edición Especial)", specialProduct.getName());
         assertEquals(1, specialProduct.getQuantity());
         assertEquals(50.0, specialProduct.getPrice(), 0.01);
+    }
+    
+    /**
+     * Prueba el método equals con objetos iguales
+     */
+    @Test
+    void testEquals_SameObjects() {
+        // Arrange
+        Product product1 = new Product("Test", 5, 10.0);
+        Product product2 = new Product("Test", 5, 10.0);
+        
+        // Act & Assert
+        assertEquals(product1, product2);
+        assertEquals(product1, product1); // Reflexivo
+    }
+    
+    /**
+     * Prueba el método equals con objetos diferentes
+     */
+    @Test
+    void testEquals_DifferentObjects() {
+        // Arrange
+        Product product1 = new Product("Test", 5, 10.0);
+        Product product2 = new Product("Test", 6, 10.0);
+        Product product3 = new Product("Test", 5, 11.0);
+        Product product4 = new Product("Different", 5, 10.0);
+        
+        // Act & Assert
+        assertNotEquals(product1, product2);
+        assertNotEquals(product1, product3);
+        assertNotEquals(product1, product4);
+        assertNotEquals(product1, null);
+        assertNotEquals(product1, "Not a product");
+    }
+    
+    /**
+     * Prueba el método hashCode
+     */
+    @Test
+    void testHashCode() {
+        // Arrange
+        Product product1 = new Product("Test", 5, 10.0);
+        Product product2 = new Product("Test", 5, 10.0);
+        
+        // Act & Assert
+        assertEquals(product1.hashCode(), product2.hashCode());
+    }
+    
+    /**
+     * Prueba el método toString
+     */
+    @Test
+    void testToString() {
+        // Arrange
+        Product testProduct = new Product("Test Product", 5, 10.50);
+        
+        // Act
+        String result = testProduct.toString();
+        
+        // Assert
+        assertTrue(result.contains("Test Product"));
+        assertTrue(result.contains("5"));
+        assertTrue(result.contains("10.50"));
+        assertEquals("Product{name='Test Product', quantity=5, price=10.50}", result);
+    }
+    
+    /**
+     * Prueba cobertura completa del constructor con todas las validaciones
+     */
+    @Test
+    void testConstructor_AllValidations() {
+        // Test casos extremos que activan todas las validaciones
+        assertThrows(IllegalArgumentException.class, () -> new Product(null, 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Product("", 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Product("Valid", -1, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Product("Valid", 0, -1));
+        
+        // Test caso válido
+        Product validProduct = new Product("Valid", 0, 0);
+        assertEquals("Valid", validProduct.getName());
+        assertEquals(0, validProduct.getQuantity());
+        assertEquals(0.0, validProduct.getPrice());
     }
 }

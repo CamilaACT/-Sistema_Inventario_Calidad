@@ -113,12 +113,12 @@
                 <failOnViolation>false</failOnViolation>
                 </configuration>
                 <executions>
-                <execution>
-                    <phase>validate</phase>
-                    <goals>
-                    <goal>checkstyle</goal>
-                    </goals>
-                </execution>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                        <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
              <!-- PMD -->
@@ -131,12 +131,12 @@
                 <failOnViolation>false</failOnViolation> <!-- Para no bloquear el build -->
                 </configuration>
                 <executions>
-                <execution>
-                    <phase>verify</phase>
-                    <goals>
-                    <goal>check</goal>
-                    </goals>
-                </execution>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                        <goal>check</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
