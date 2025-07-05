@@ -6,7 +6,10 @@ name: Deploy static HTML from Java to Pages
 # 2. Cuando se ejecuta manualmente desde la pestaña "Actions"
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - develop
+      - feature/**
   workflow_dispatch:
 
 # Configura los permisos del token automático de GitHub para permitir despliegue a GitHub Pages
