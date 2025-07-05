@@ -1,0 +1,73 @@
+# Nombre del workflow que aparecerá en la pestaña "Actions"
+name: Deploy static HTML from Java to Pages
+
+# El workflow se ejecuta en dos casos:
+# 1. Cuando se hace push a la rama "main"
+# 2. Cuando se ejecuta manualmente desde la pestaña "Actions"
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Configura los permisos del token automático de GitHub para permitir despliegue a GitHub Pages
+permissions:
+  contents: read         # Permite leer el contenido del repositorio
+  pages: write           # Permite publicar en GitHub Pages
+  id-token: write        # Requerido para autenticación con el entorno de Pages
+
+# Controla la ejecución concurrente del workflow:
+# si hay uno en curso, se saltan los intermedios y se ejecuta solo el más reciente
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job de construcción y despliegue
+  build:
+    runs-on: ubuntu-latest   # Usa la última versión del runner Ubuntu en la nube
+
+    steps:
+      # Paso 1: Clona el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Paso 2: Instala Java 11 desde Temurin (recomendado por GitHub)
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      # Paso 3: Compila el proyecto Java (solo chequea sintaxis y estructura)
+      - name: Compile Java project
+        run: mvn compile
+
+      # Paso 4: Ejecuta la clase Java que genera el archivo HTML
+      # Este paso produce el contenido que se mostrará en GitHub Pages
+      - name: Generate static HTML with Java
+        run: mvn exec:java -Dexec.mainClass="sistema.inventario.Main"
+
+      # Paso 5: Prepara GitHub Pages para recibir los archivos
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Paso 6: Carga el contenido de la carpeta "output" como artefacto para Pages
+      # Solo esta carpeta será publicada
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'output'
+
+  # Job separado para el despliegue
+  deploy:
+    needs: build  # Este job se ejecuta solo si el job "build" fue exitoso
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages  # Define el entorno de despliegue para Pages
+      url: ${{ steps.deployment.outputs.page_url }}  # Expone la URL pública como variable
+
+    steps:
+      # Paso final: despliega el artefacto a GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
