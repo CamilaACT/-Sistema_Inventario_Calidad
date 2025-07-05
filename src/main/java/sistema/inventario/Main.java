@@ -21,7 +21,7 @@ public class Main {
             }
         }
         
-        String htmlFilePath = "output/index.html";
+        String htmlFilePath = "output/index1.html";
         // Genera estructura HTML básica
         HtmlReportPageGenerator page = new HtmlReportPageGenerator(htmlFilePath);
         page.startHtml();
