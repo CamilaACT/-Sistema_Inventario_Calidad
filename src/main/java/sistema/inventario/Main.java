@@ -41,5 +41,7 @@ public class Main {
         inventory.addProduct("Monitor", 5, 129.99);
         inventory.addProduct("Teclado", 10, 39.99);
         inventory.printInventory();
+
+        System. out.println("Versión 1.0.0 lista para producción.");
     }
 }
