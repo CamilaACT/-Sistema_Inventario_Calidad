@@ -93,6 +93,7 @@
                         </goals>
                     </execution>
                     <execution>
+                        <phase>validate</phase>
                         <id>report</id>
                         <goals>
                             <goal>report</goal>
@@ -112,12 +113,12 @@
                 <failOnViolation>false</failOnViolation>
                 </configuration>
                 <executions>
-                <execution>
-                    <phase>validate</phase>
-                    <goals>
-                    <goal>checkstyle</goal>
-                    </goals>
-                </execution>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                        <goal>checkstyle</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
              <!-- PMD -->
@@ -130,11 +131,12 @@
                 <failOnViolation>false</failOnViolation> <!-- Para no bloquear el build -->
                 </configuration>
                 <executions>
-                <execution>
-                    <goals>
-                    <goal>check</goal>
-                    </goals>
-                </execution>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                        <goal>check</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
