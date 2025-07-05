@@ -1,6 +1,7 @@
-sistema/inventario/Product.class
-sistema/inventario/ConsoleOutput.class
-sistema/inventario/Inventory.class
-sistema/inventario/HtmlOutput.class
 sistema/inventario/IOutput.class
 sistema/inventario/Main.class
+sistema/inventario/Product.class
+sistema/inventario/ConsoleOutput.class
+sistema/inventario/HtmlReportPageGenerator.class
+sistema/inventario/Inventory.class
+sistema/inventario/HtmlOutput.class

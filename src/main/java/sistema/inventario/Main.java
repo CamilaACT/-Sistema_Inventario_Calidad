@@ -10,11 +10,21 @@ public class Main {
      * @param args argumentos
      */
     public static void main(String[] args) {
-        IOutput htmlOutput = new HtmlOutput("output/index.html");
+
+        String htmlFilePath = "output/index.html";
+        // Genera estructura HTML básica
+        HtmlReportPageGenerator page = new HtmlReportPageGenerator(htmlFilePath);
+        page.startHtml();
+
+        IOutput htmlOutput = new HtmlOutput(htmlFilePath);
         Inventory htmlInventory = new Inventory(htmlOutput);
         htmlInventory.addProduct("Monitor", 5, 129.99);
         htmlInventory.addProduct("Teclado", 10, 39.99);
         htmlInventory.printInventory();
+
+        // Enlaces a reportes
+        page.addLinksToReports();
+        page.endHtml();
 
         IOutput output = new ConsoleOutput();
         Inventory inventory = new Inventory(output);
