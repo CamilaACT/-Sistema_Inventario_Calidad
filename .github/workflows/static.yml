@@ -119,8 +119,13 @@ jobs:
 
       - name: Copy reports to output
         run: |
-          mkdir -p output
-          cp -r target/site/. output/
+          mkdir -p output/jacoco
+          cp -r target/site/jacoco/* output/jacoco/ || true
+
+          cp target/site/checkstyle.html output/checkstyle.html || true
+
+          cp target/site/pmd.html output/pmd.html || true
+          
 
       - name: Setup GitHub Pages
         if: github.ref == 'refs/heads/main'
