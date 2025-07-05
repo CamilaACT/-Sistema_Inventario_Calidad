@@ -80,7 +80,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Jacoco
-        run: mvn jacoco:prepare-agent test jacoco:report
+        run: mvn verify
 
   pmd:
     runs-on: ubuntu-latest
