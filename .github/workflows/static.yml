@@ -1,249 +1,122 @@
 name: Deploy static HTML from Java to Pages
- 
 on:
-
   push:
-
     branches:
-
       - main
-
       - release/**
-
       - develop
-
       - feature/**
-
   workflow_dispatch:
- 
 permissions:
-
   contents: read
-
   pages: write
-
   id-token: write
- 
 concurrency:
-
   group: "pages"
-
   cancel-in-progress: false
- 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
- 
       - name: Set up Java
-
         uses: actions/setup-java@v3
-
         with:
-
           java-version: '11'
-
           distribution: 'temurin'
- 
       - name: Compile Java
-
         run: mvn compile
- 
   test:
-
     runs-on: ubuntu-latest
-
     needs: build
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
- 
       - name: Set up Java
-
         uses: actions/setup-java@v3
-
         with:
-
           java-version: '11'
-
           distribution: 'temurin'
- 
       - name: Run unit tests
-
         run: mvn test
- 
   checkstyle:
-
     runs-on: ubuntu-latest
-
     needs: build
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
- 
       - name: Set up Java
-
         uses: actions/setup-java@v3
-
         with:
-
           java-version: '11'
-
           distribution: 'temurin'
- 
       - name: Run Checkstyle
-
         run: mvn checkstyle:checkstyle
- 
   coverage:
-
     runs-on: ubuntu-latest
-
     needs: test
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
- 
       - name: Set up Java
-
         uses: actions/setup-java@v3
-
         with:
-
           java-version: '11'
-
           distribution: 'temurin'
- 
-      - name: Run Jacoco
-
-        run: mvn jacoco:report
- 
+      - name: Run JaCoCo
+        run: mvn verify
   pmd:
-
     runs-on: ubuntu-latest
-
     needs: build
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
- 
       - name: Set up Java
-
         uses: actions/setup-java@v3
-
         with:
-
           java-version: '11'
-
           distribution: 'temurin'
- 
       - name: Run PMD
-
         run: mvn pmd:pmd
- 
   package:
-
     runs-on: ubuntu-latest
-
     needs: [build, test, checkstyle, coverage, pmd]
-
     steps:
-
       - name: Checkout code
-
         uses: actions/checkout@v4
- 
       - name: Set up Java
-
         uses: actions/setup-java@v3
-
         with:
-
           java-version: '11'
-
           distribution: 'temurin'
  
-      - name: Generate HTML and prepare output
-
+      - name: Generate JaCoCo Report
         run: |
-
-          mvn clean compile
-
-          mvn exec:java -Dexec.mainClass="sistema.inventario.Main" -e
-
+          mvn clean verify
           mkdir -p output
  
       - name: Copy reports to output
-
         run: |
-
-          mkdir -p output/pmd output/checkstyle output/jacoco
-
-          cp -r target/site/pmd/* output/pmd/ || echo "No PMD reports to copy"
-
-          cp -r target/site/checkstyle/* output/checkstyle/ || echo "No Checkstyle reports to copy"
-
-          cp -r target/site/jacoco/* output/jacoco/ || echo "No Jacoco reports to copy"
- 
-      - name: List output content for debugging
-
-        run: ls -R output
+          mkdir -p output
+          cp -r target/site/. output/
  
       - name: Setup GitHub Pages
-
         if: github.ref == 'refs/heads/main'
-
         uses: actions/configure-pages@v5
- 
-      - name: Upload artifact to GitHub Pages
-
+      - name: Upload artifact
         if: github.ref == 'refs/heads/main'
-
         uses: actions/upload-pages-artifact@v3
-
         with:
-
           path: 'output'
- 
   deploy:
-
     if: github.ref == 'refs/heads/main'
-
     needs: package
-
     runs-on: ubuntu-latest
-
     environment:
-
       name: github-pages
-
       url: ${{ steps.deployment.outputs.page_url }}
- 
     steps:
-
       - name: Deploy to GitHub Pages
-
         id: deployment
-
         uses: actions/deploy-pages@v4
-
- 
