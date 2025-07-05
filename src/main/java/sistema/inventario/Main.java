@@ -1,5 +1,7 @@
 package sistema.inventario;
 
+import java.io.File;
+
 /**
  * Clase principal para ejecutar el sistema de inventario.
  */
@@ -10,7 +12,15 @@ public class Main {
      * @param args argumentos
      */
     public static void main(String[] args) {
-
+        File outputDir = new File("output");
+        if (!outputDir.exists()) {
+            boolean created = outputDir.mkdirs();
+            if (!created) {
+                System.err.println("Error: No se pudo crear la carpeta output.");
+                return;
+            }
+        }
+        
         String htmlFilePath = "output/index.html";
         // Genera estructura HTML básica
         HtmlReportPageGenerator page = new HtmlReportPageGenerator(htmlFilePath);
