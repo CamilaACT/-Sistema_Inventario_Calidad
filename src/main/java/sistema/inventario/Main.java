@@ -30,7 +30,7 @@ public class Main {
     IOutput htmlOutput = new HtmlOutput(htmlFilePath);
     Inventory htmlInventory = new Inventory(htmlOutput);
     htmlInventory.addProduct("Monitor", 5, 129.99);
-    htmlInventory.addProduct("Teclado", 10, 39.99);
+    htmlInventory.addProduct("Teclado", 10, 40.99);
     htmlInventory.printInventory();
 
     // Enlaces a reportes
